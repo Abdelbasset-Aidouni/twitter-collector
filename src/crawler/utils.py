@@ -20,8 +20,10 @@ def crawl_page(url,scroll_count=3):
 
     # Set chrome webdriver options
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
 
     # initialize chrome webdriver
     path = find("chromedriver_linux64/chromedriver")
@@ -33,8 +35,8 @@ def crawl_page(url,scroll_count=3):
     for i in range(1,scroll_count):
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);") # Scroll down the page
         # time.sleep(random.randint(10,15)) # using random to avoid being blocked
-        time.sleep(30)
-        tweets.extend(driver.find_elements_by_css_selector(TWEET_TEXT_SELECTOR))
+        time.sleep(20)
+        tweets.extend([x.text for x in driver.find_elements_by_css_selector(TWEET_TEXT_SELECTOR)])
         
     
     return set(tweets)

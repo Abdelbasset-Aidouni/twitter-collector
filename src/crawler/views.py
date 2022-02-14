@@ -1,19 +1,38 @@
-from django.views.generic import View
+from time import sleep, time
+from django.shortcuts import render
+from django.views.generic import View,TemplateView
 from django.http import HttpResponse
 # Create your views here.
 from .utils import crawl_page
-from detoxify import Detoxify
+from textblob import TextBlob
+from .models import Tweet
+
+from django.views.generic import ListView
+
+
+class TestView(TemplateView):
+    template_name = "test.html"
 
 
 class CrawlTweetsView(View):
 
-    def get(request,*args,**kwargs):
+    def get(self,request,*args,**kwargs):
 
-        url = "https://twitter.com/search?q=covid&src=typed_query"
-        # tweets = crawl_page(url)
-        tweets = ["hhh","good","baad"]
-        toxicity = []
+
+        q =request.GET["q"]
+        url = f"https://twitter.com/search?q={q}&src=typed_query"
+        tweets = crawl_page(url)
+        
         for tweet in tweets:
-            toxicity.append(Detoxify('original').predict(tweet))
-
-        return HttpResponse(toxicity)
+            sentiment = TextBlob(tweet).sentiment
+            _tweet = Tweet(
+                content = tweet,
+                polarity = sentiment.polarity,
+                subjectivity = sentiment.subjectivity,
+                subject=q
+            )
+            _tweet.save()
+        
+        documents = Tweet.objects(subject=q)
+        
+        return HttpResponse(render(request,"tweet_list.html",{"tweets":documents}))

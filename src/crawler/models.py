@@ -1,14 +1,15 @@
 import mongoengine
-from ..twitter_collector.settings import DATABASE
+from django.conf import settings
 
 
-mongoengine.connect(db=DATABASE["NAME"], host=DATABASE["HOST"])
+mongoengine.connect(host="mongodb://root:root@db:27017/tweet_db?authSource=admin")
 
 # Create your models here
 
 
 class Tweet(mongoengine.Document):
-    content     = mongoengine.StringField()
-    language    = mongoengine.StringField()
-    toxicity    = mongoengine.FloatField()
+    content         = mongoengine.StringField()
+    polarity        = mongoengine.FloatField()
+    subjectivity    = mongoengine.FloatField()
+    subject         = mongoengine.StringField()
 

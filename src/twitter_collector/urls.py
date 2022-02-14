@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from crawler.views import CrawlTweetsView
+from crawler.views import CrawlTweetsView,TestView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tweets/',CrawlTweetsView.as_view(),name="tweets")
+    path('tweets/',CrawlTweetsView.as_view(),name="tweets"),
+    path('test/',TestView.as_view(),name="test")
 ]
